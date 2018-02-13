@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import axios from 'axios';
+import {connect} from 'react-redux';
+import {signin} from '../actions';
 
 class SignIn extends Component{
     constructor(props){
@@ -26,12 +27,8 @@ class SignIn extends Component{
         event.preventDefault();
 
         console.log('Form submitted: ', this.state);
+        this.props.signin(this.state);
 
-        axios.post('http://localhost:9000/auth/signin', this.state).then(resp => {
-            console.log('Sign in resp: ', resp);
-        }).catch(err => {
-            console.log('sign in error: ', err.message);
-        });
     }
 
     render(){
@@ -50,11 +47,18 @@ class SignIn extends Component{
                         Password:
                         <input onChange={this.handleChange} name="password" value={password} type="text"/>
                     </div>
-                    <button>Sign In</button>
+                    <button className="btn">Sign In</button>
+                    <p className="red-text">{this.props.error}</p>
                 </form>
             </div>
         )
     }
 }
 
-export default SignIn;
+function mapStateToProps(state){
+    return {
+        error: state.user.error
+    }
+}
+
+export default connect(mapStateToProps, {signin})(SignIn);
